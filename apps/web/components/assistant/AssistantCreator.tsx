@@ -1,3 +1,5 @@
+'use client'
+
 import { useState } from 'react';
 import { Button } from '../ui/button';
 import { Card } from '../ui/card';
@@ -16,7 +18,7 @@ import {
   Sliders
 } from 'lucide-react';
 
-import { useAuth, useNavigation } from '../../contexts';
+import { useAuth, useNavigation } from '@/lib/contexts';
 
 const colorOptions = [
   { name: 'Purple', class: 'bg-purple-500' },

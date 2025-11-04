@@ -10,7 +10,7 @@ import {
   Calendar
 } from 'lucide-react';
 
-import { useAuth, useNavigation } from '../../contexts';
+import { useAuth, useNavigation } from '@/lib/contexts';
 
 export function BillingPage() {
   const { user } = useAuth();

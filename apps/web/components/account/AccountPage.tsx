@@ -1,3 +1,5 @@
+'use client'
+
 import { useState } from 'react';
 import { Button } from '../ui/button';
 import { Card } from '../ui/card';
@@ -29,7 +31,7 @@ import {
   SelectValue,
 } from '../ui/select';
 
-import { useAuth, useNavigation } from '../../contexts';
+import { useAuth, useNavigation } from '@/lib/contexts';
 
 export function AccountPage() {
   const { user } = useAuth();

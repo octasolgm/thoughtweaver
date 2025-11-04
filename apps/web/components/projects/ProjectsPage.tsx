@@ -1,3 +1,5 @@
+'use client'
+
 import { useState } from 'react';
 import { Button } from '../ui/button';
 import { Card } from '../ui/card';
@@ -6,7 +8,7 @@ import { SidebarTrigger } from '../ui/sidebar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger, DialogFooter } from '../ui/dialog';
 import { Plus, FolderOpen, MessageSquare, Trash2, MoreVertical } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../ui/dropdown-menu';
-import { useConversation, useNavigation, useSelection } from '../../contexts';
+import { useConversation, useNavigation, useSelection } from '@/lib/contexts';
 
 export interface Project {
   id: string;

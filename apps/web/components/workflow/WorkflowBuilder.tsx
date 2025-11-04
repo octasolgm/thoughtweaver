@@ -1,3 +1,5 @@
+'use client'
+
 import { useState, memo, useCallback } from 'react';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -27,7 +29,7 @@ import {
   X as XIcon,
 } from 'lucide-react';
 import { assistants } from '../assistant/assistantData';
-import { useAuth, useNavigation, useSelection } from '../../contexts';
+import { useAuth, useNavigation, useSelection } from '@/lib/contexts';
 
 interface WorkflowStep {
   id: string;
