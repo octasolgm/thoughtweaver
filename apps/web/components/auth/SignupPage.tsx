@@ -1,7 +1,9 @@
+'use client'
+
 import { Button } from '../ui/button';
 import { Card } from '../ui/card';
 import { Lightbulb } from 'lucide-react';
-import { useAuth, useNavigation } from '../../contexts';
+import { useAuth, useNavigation } from '@/lib/contexts';
 
 export function SignupPage() {
   const { login } = useAuth();

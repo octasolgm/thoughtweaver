@@ -1,3 +1,5 @@
+'use client'
+
 import { useState, useEffect } from 'react';
 import { Button } from '../ui/button';
 import { Card } from '../ui/card';
@@ -29,7 +31,7 @@ import {
   AlertDialogTrigger,
 } from '../ui/alert-dialog';
 import { getAssistantById } from './assistantData';
-import { useAuth, useNavigation } from '../../contexts';
+import { useAuth, useNavigation } from '@/lib/contexts';
 
 interface AIAssistantEditorProps {
   assistantId?: string;

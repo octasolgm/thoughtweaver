@@ -1,3 +1,5 @@
+'use client'
+
 import { useState, useRef, useEffect } from 'react';
 import { Button } from '../ui/button';
 import { Card } from '../ui/card';
@@ -51,7 +53,7 @@ import {
   type CarouselApi,
 } from '../ui/carousel';
 import { assistants as assistantData } from '../assistant/assistantData';
-import { useAuth, useNavigation, useConversation, useSelection } from '../../contexts';
+import { useAuth, useNavigation, useConversation, useSelection } from '@/lib/contexts';
 
 const workflows = [
   { 

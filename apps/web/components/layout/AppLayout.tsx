@@ -1,3 +1,5 @@
+'use client'
+
 import { ReactNode } from 'react';
 import {
   Sidebar,
@@ -27,7 +29,7 @@ import {
   Bot,
   FolderOpen
 } from 'lucide-react';
-import { useAuth, useNavigation, useConversation } from '../../contexts';
+import { useAuth, useNavigation, useConversation } from '@/lib/contexts';
 
 interface AppLayoutProps {
   children: ReactNode;
