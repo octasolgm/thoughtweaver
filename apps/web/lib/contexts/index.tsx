@@ -1,3 +1,5 @@
+'use client'
+
 /**
  * Context Providers - v1.2 Architecture Refactoring
  * 

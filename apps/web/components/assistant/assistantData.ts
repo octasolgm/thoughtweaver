@@ -1,4 +1,4 @@
-import allRounderAvatar from 'figma:asset/66df02ed14e51fbca9624ccbf86d6c66471695a9.png';
+const allRounderAvatar = '/assets/66df02ed14e51fbca9624ccbf86d6c66471695a9.png';
 
 export interface Assistant {
   id: string;

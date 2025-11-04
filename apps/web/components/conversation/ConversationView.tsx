@@ -1,3 +1,5 @@
+'use client'
+
 import { useState, useRef, useEffect, memo } from 'react';
 import { Button } from '../ui/button';
 import { Card } from '../ui/card';
@@ -53,13 +55,13 @@ import {
   Shield,
 } from 'lucide-react';
 import { ContextView } from './ContextView';
-import allRounderAvatar from 'figma:asset/66df02ed14e51fbca9624ccbf86d6c66471695a9.png';
-import creativeAvatar from 'figma:asset/554fa3f225599e9d74085e980bec2674888447d2.png';
-import analyticalAvatar from 'figma:asset/dd66067f40eb374e0f675639f890289fb607d8f0.png';
-import devilAdvocateAvatar from 'figma:asset/2e1615857ca91e0983178c6d9454a9bc816ba468.png';
-import optimistAvatar from 'figma:asset/b20d2ead8618218f3f745bbfe7fbfca414f24e8e.png';
+const allRounderAvatar = '/assets/66df02ed14e51fbca9624ccbf86d6c66471695a9.png';
+const creativeAvatar = '/assets/554fa3f225599e9d74085e980bec2674888447d2.png';
+const analyticalAvatar = '/assets/dd66067f40eb374e0f675639f890289fb607d8f0.png';
+const devilAdvocateAvatar = '/assets/2e1615857ca91e0983178c6d9454a9bc816ba468.png';
+const optimistAvatar = '/assets/b20d2ead8618218f3f745bbfe7fbfca414f24e8e.png';
 import { assistants as allAssistants } from '../assistant/assistantData';
-import { useAuth, useNavigation, useConversation, useSelection } from '../../contexts';
+import { useAuth, useNavigation, useConversation, useSelection } from '@/lib/contexts';
 
 interface Message {
   id: string;
@@ -494,6 +496,8 @@ export function ConversationView() {
   const [workflowName, setWorkflowName] = useState('');
   const [userMessageCount, setUserMessageCount] = useState(0);
   const [selectedWorkflowAssistant, setSelectedWorkflowAssistant] = useState<string | null>(null);
+  const initializedRef = useRef(false);
+  const sendingRef = useRef(false);
 
   const llmModels = [
     { 
@@ -756,10 +760,24 @@ export function ConversationView() {
   };
 
   useEffect(() => {
+    // Reset when conversation changes
+    if (activeConversation?.id) {
+      initializedRef.current = false;
+      setMessages([]);
+      setUserMessageCount(0);
+    }
+  }, [activeConversation?.id]);
+
+  useEffect(() => {
     // Only run this effect once when conversation starts (currentPrompt changes)
+    // Prevent duplicate initialization
+    if (initializedRef.current || !currentPrompt || messages.length > 0) return;
+    
+    initializedRef.current = true;
+    
     // Add initial user message
     const initialMessage: Message = {
-      id: '1',
+      id: `initial-${Date.now()}`,
       role: 'user',
       content: currentPrompt,
       timestamp: new Date()
@@ -769,7 +787,7 @@ export function ConversationView() {
 
     // Immediately generate AI response from active assistant
     setIsTyping(true);
-    setTimeout(() => {
+    const timeoutId = setTimeout(() => {
       let responseContent = '';
       
       if (activeAssistant === 'creative') {
@@ -787,7 +805,7 @@ export function ConversationView() {
       }
 
       const response: Message = {
-        id: `${Date.now()}`,
+        id: `response-${Date.now()}`,
         role: 'assistant',
         content: responseContent,
         assistantId: activeAssistant,
@@ -795,9 +813,15 @@ export function ConversationView() {
         llmModel: selectedLLM
       };
 
-      setMessages(prev => [...prev, response]);
+      setMessages(prev => {
+        const exists = prev.some(m => m.id === response.id);
+        if (exists) return prev;
+        return [...prev, response];
+      });
       setIsTyping(false);
     }, 1500);
+    
+    return () => clearTimeout(timeoutId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPrompt]); // Only re-run when conversation starts with new prompt
 
@@ -810,23 +834,31 @@ export function ConversationView() {
   };
 
   const handleSendMessage = () => {
-    if (!input.trim()) return;
+    if (!input.trim() || sendingRef.current || isTyping) return;
+    
+    sendingRef.current = true;
+    const messageContent = input.trim();
+    setInput('');
 
     const userMsg: Message = {
-      id: Date.now().toString(),
+      id: `user-${Date.now()}-${Math.random()}`,
       role: 'user',
-      content: input,
+      content: messageContent,
       timestamp: new Date()
     };
 
-    setMessages(prev => [...prev, userMsg]);
+    setMessages(prev => {
+      const exists = prev.some(m => m.id === userMsg.id || (m.role === 'user' && m.content === messageContent && Math.abs(m.timestamp.getTime() - userMsg.timestamp.getTime()) < 1000));
+      if (exists) return prev;
+      return [...prev, userMsg];
+    });
     
     // Increment user message count
     const newUserMessageCount = userMessageCount + 1;
     setUserMessageCount(newUserMessageCount);
     
     // Check for workflow opportunities
-    const suggestion = detectWorkflowOpportunity(newUserMessageCount, input);
+    const suggestion = detectWorkflowOpportunity(newUserMessageCount, messageContent);
     if (suggestion && !currentSuggestion) {
       setTimeout(() => {
         setCurrentSuggestion(suggestion);
@@ -834,14 +866,12 @@ export function ConversationView() {
         setSelectedWorkflowAssistant(suggestion.recommendedAssistants[0]);
       }, 2000);
     }
-    
-    setInput('');
 
     // Simulate AI response from the active assistant
     setIsTyping(true);
     setTimeout(() => {
       const response: Message = {
-        id: `${Date.now()}`,
+        id: `assistant-${Date.now()}-${Math.random()}`,
         role: 'assistant',
         content: `This is a thoughtful point. Let me add to the discussion...`,
         assistantId: activeAssistant,
@@ -849,8 +879,13 @@ export function ConversationView() {
         llmModel: selectedLLM
       };
 
-      setMessages(prev => [...prev, response]);
+      setMessages(prev => {
+        const exists = prev.some(m => m.id === response.id || (m.role === 'assistant' && m.content === response.content && Math.abs(m.timestamp.getTime() - response.timestamp.getTime()) < 1000));
+        if (exists) return prev;
+        return [...prev, response];
+      });
       setIsTyping(false);
+      sendingRef.current = false;
     }, 1500);
   };
 
@@ -1185,7 +1220,7 @@ export function ConversationView() {
                         size="icon"
                         className="h-8 w-8"
                         onClick={handleSendMessage}
-                        disabled={!input.trim()}
+                        disabled={!input.trim() || sendingRef.current || isTyping}
                       >
                         <Send className="w-4 h-4" />
                       </Button>

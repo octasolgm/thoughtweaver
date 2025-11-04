@@ -1,3 +1,5 @@
+'use client'
+
 import { useState, memo } from 'react';
 import { Button } from '../ui/button';
 import { Card } from '../ui/card';
@@ -11,7 +13,7 @@ import {
 import { assistants as assistantData, Assistant } from './assistantData';
 import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ResponsiveContainer } from 'recharts';
 
-import { useAuth, useNavigation } from '../../contexts';
+import { useAuth, useNavigation } from '@/lib/contexts';
 
 // Memoized Assistant Card Component for Performance
 const AssistantCard = memo(({ 

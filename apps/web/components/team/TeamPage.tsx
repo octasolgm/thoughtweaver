@@ -1,3 +1,5 @@
+'use client'
+
 import { useState } from 'react';
 import { Button } from '../ui/button';
 import { Card } from '../ui/card';
@@ -46,7 +48,7 @@ interface TeamMember {
   joinedDate: string;
 }
 
-import { useAuth, useNavigation } from '../../contexts';
+import { useAuth, useNavigation } from '@/lib/contexts';
 
 export function TeamPage() {
   const { user } = useAuth();

@@ -1,3 +1,5 @@
+'use client'
+
 import { useState } from 'react';
 import { Button } from '../ui/button';
 import { Card } from '../ui/card';
@@ -30,7 +32,7 @@ interface Workflow {
   steps: WorkflowStep[];
 }
 
-import { useAuth, useNavigation, useSelection } from '../../contexts';
+import { useAuth, useNavigation, useSelection } from '@/lib/contexts';
 
 export function WorkflowEditor() {
   const { user } = useAuth();

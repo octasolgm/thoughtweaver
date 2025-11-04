@@ -1,102 +1,78 @@
-import Image, { type ImageProps } from "next/image";
-import { Button } from "@repo/ui/button";
-import styles from "./page.module.css";
+'use client'
 
-type Props = Omit<ImageProps, "src"> & {
-  srcLight: string;
-  srcDark: string;
-};
+import { Suspense, useEffect } from 'react';
+import { AppLayout } from '@/components/layout/AppLayout';
+import { SignupPage } from '@/components/auth/SignupPage';
+import { HomePage } from '@/components/home/HomePage';
+import { ConversationView } from '@/components/conversation/ConversationView';
+import { ContextBuilder } from '@/components/context/ContextBuilder';
+import { WorkflowBuilder } from '@/components/workflow/WorkflowBuilder';
+import { WorkflowEditor } from '@/components/workflow/WorkflowEditor';
+import { PreferencesPage } from '@/components/preferences/PreferencesPage';
+import { BillingPage } from '@/components/billing/BillingPage';
+import { SelectLLMsPage } from '@/components/llms/SelectLLMsPage';
+import { TeamPage } from '@/components/team/TeamPage';
+import { AccountPage } from '@/components/account/AccountPage';
+import { AssistantCreator } from '@/components/assistant/AssistantCreator';
+import { AIAssistantsPage } from '@/components/assistant/AIAssistantsPage';
+import { AIAssistantEditor } from '@/components/assistant/AIAssistantEditor';
+import { ProjectsPage } from '@/components/projects/ProjectsPage';
+import { useAuth, useNavigation } from '@/lib/contexts';
 
-const ThemeImage = (props: Props) => {
-  const { srcLight, srcDark, ...rest } = props;
-
+// Loading spinner component
+function LoadingSpinner() {
   return (
-    <>
-      <Image {...rest} src={srcLight} className="imgLight" />
-      <Image {...rest} src={srcDark} className="imgDark" />
-    </>
-  );
-};
-
-export default function Home() {
-  return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <ThemeImage
-          className={styles.logo}
-          srcLight="turborepo-dark.svg"
-          srcDark="turborepo-light.svg"
-          alt="Turborepo logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>apps/web/app/page.tsx</code>
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new/clone?demo-description=Learn+to+implement+a+monorepo+with+a+two+Next.js+sites+that+has+installed+three+local+packages.&demo-image=%2F%2Fimages.ctfassets.net%2Fe5382hct74si%2F4K8ZISWAzJ8X1504ca0zmC%2F0b21a1c6246add355e55816278ef54bc%2FBasic.png&demo-title=Monorepo+with+Turborepo&demo-url=https%3A%2F%2Fexamples-basic-web.vercel.sh%2F&from=templates&project-name=Monorepo+with+Turborepo&repository-name=monorepo-turborepo&repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fturborepo%2Ftree%2Fmain%2Fexamples%2Fbasic&root-directory=apps%2Fdocs&skippable-integrations=1&teamSlug=vercel&utm_source=create-turbo"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://turborepo.com/docs?utm_source"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
-        </div>
-        <Button appName="web" className={styles.secondary}>
-          Open alert
-        </Button>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com/templates?search=turborepo&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://turborepo.com?utm_source=create-turbo"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to turborepo.com →
-        </a>
-      </footer>
+    <div className="flex items-center justify-center h-screen">
+      <div className="flex flex-col items-center gap-3">
+        <div className="w-8 h-8 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin" />
+        <p className="text-gray-600">Loading...</p>
+      </div>
     </div>
   );
+}
+
+function AppContent() {
+  const { user, isAuthenticated } = useAuth();
+  const { currentPage, navigate } = useNavigation();
+
+  // Auto-navigate authenticated users to home if they're on signup
+  useEffect(() => {
+    if (isAuthenticated && currentPage === 'signup') {
+      navigate('home');
+    }
+  }, [isAuthenticated, currentPage, navigate]);
+
+  // Show signup page if not authenticated
+  if (!isAuthenticated) {
+    return <SignupPage />;
+  }
+
+  return (
+    <AppLayout>
+      <Suspense fallback={<LoadingSpinner />}>
+        {currentPage === 'home' && <HomePage />}
+        {currentPage === 'conversation' && <ConversationView />}
+        {currentPage === 'context' && <ContextBuilder />}
+        {currentPage === 'workflow' && <WorkflowBuilder />}
+        {currentPage === 'workflow-editor' && <WorkflowEditor />}
+        {currentPage === 'preferences' && <PreferencesPage />}
+        {currentPage === 'billing' && <BillingPage />}
+        {currentPage === 'llms' && <SelectLLMsPage />}
+        {currentPage === 'team' && <TeamPage />}
+        {currentPage === 'account' && <AccountPage />}
+        {currentPage === 'assistant-creator' && <AssistantCreator />}
+        {currentPage === 'ai-assistants' && <AIAssistantsPage />}
+        {currentPage.startsWith('ai-assistant-editor-') && (
+          <AIAssistantEditor
+            assistantId={currentPage.replace('ai-assistant-editor-', '')}
+          />
+        )}
+        {currentPage === 'projects' && <ProjectsPage />}
+      </Suspense>
+    </AppLayout>
+  );
+}
+
+export default function Page() {
+  return <AppContent />;
 }

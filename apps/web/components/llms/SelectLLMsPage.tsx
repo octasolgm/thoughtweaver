@@ -1,3 +1,5 @@
+'use client'
+
 import { useState } from 'react';
 import { Button } from '../ui/button';
 import { Card } from '../ui/card';
@@ -31,7 +33,7 @@ interface LLMModel {
   enabled: boolean;
 }
 
-import { useAuth, useNavigation, useSelection } from '../../contexts';
+import { useAuth, useNavigation, useSelection } from '@/lib/contexts';
 
 export function SelectLLMsPage() {
   const { user } = useAuth();
