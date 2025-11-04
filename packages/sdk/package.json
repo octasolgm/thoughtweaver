@@ -1,0 +1,17 @@
+{
+  "name": "@thoughtweaver/sdk",
+  "version": "1.0.0",
+  "main": "./src/client.ts",
+  "types": "./src/client.ts",
+  "private": true,
+  "scripts": {
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@thoughtweaver/types": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.2.2"
+  }
+}
+
